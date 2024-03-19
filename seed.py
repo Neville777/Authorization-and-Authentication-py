@@ -18,7 +18,7 @@ def seed_database():
         db.create_all()
         
         # Create fake users with profiles and collections
-        for _ in range(10):  # Creating 10 users for example
+        for _ in range(10):  # Creating 10 users
             user = User(email=fake.email(), password=fake.password())
             profile = Profile(first_name=fake.first_name(), last_name=fake.last_name(),
                               photo_url=fake.image_url(), location=fake.city())
