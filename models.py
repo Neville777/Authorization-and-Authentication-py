@@ -8,7 +8,8 @@ class User(db.Model, SerializerMixin):
     
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String)
-    password = db.Column(db.String)  # Corrected misspelling
+    password = db.Column(db.String)
+    
     # Relationships
     profile = db.relationship('Profile', back_populates='user', uselist=False)
     collections = db.relationship('Collection', back_populates='user')
@@ -21,7 +22,8 @@ class Profile(db.Model, SerializerMixin):
     last_name = db.Column(db.String)
     photo_url = db.Column(db.String)
     location = db.Column(db.String)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))  # Corrected foreign key reference
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
     # Relationships
     user = db.relationship('User', back_populates='profile', uselist=False)
 
@@ -30,6 +32,7 @@ class Collection(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     photo_url = db.Column(db.String)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))  # Corrected foreign key reference
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))  
+    
     # Relationships
     user = db.relationship('User', back_populates='collections')
