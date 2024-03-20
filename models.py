@@ -28,6 +28,7 @@ class Profile(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates='profile', uselist=False)
 
 class Collection(db.Model, SerializerMixin):
+    serialize_only = ('name','photo_url','user_id')
     __tablename__ = 'collections'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)

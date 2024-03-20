@@ -6,6 +6,12 @@ from flask_jwt_extended import create_access_token, JWTManager
 
 jwt = JWTManager()
 
+
+@jwt.user_lookup_loader
+def user_lookup_callback(__jwt__header, jwt_data):
+    identity = jwt_data["sub"]
+    return User.query.filter_by(id=identity).first()
+
 auth_bp = Blueprint('auth', __name__)
 api = Api(auth_bp)
 
