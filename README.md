@@ -13,8 +13,8 @@ This project is a Flask RESTful API with authentication using JWT (JSON Web Toke
 ### 1. Clone the Repository:
 
 ```bash
-git clone <repository_url>
-cd <project_directory>
+git clone git@github.com:Neville777/Authorization-and-Authentication-py.git
+cd Authorization-and-Authentication-py
 ```
 
 ### 2. Set Up Virtual Environment (Optional but Recommended):
@@ -66,6 +66,7 @@ flask run
 ### Authentication Endpoints:
 
 - **Register User:**
+
   - Endpoint: `/register`
   - Method: `POST`
   - Payload: `{ "email": "<user_email>", "password": "<user_password>" }`
@@ -80,22 +81,26 @@ flask run
 ### Collection Endpoints:
 
 - **Get Collections:**
+
   - Endpoint: `/collections`
   - Method: `GET`
   - Description: Retrieves collections associated with the authenticated user.
 
 - **Create Collection:**
+
   - Endpoint: `/collections`
   - Method: `POST`
   - Payload: `{ "name": "<collection_name>", "photo_url": "<photo_url>" }`
   - Description: Creates a new collection for the authenticated user.
 
 - **Get Collection by ID:**
+
   - Endpoint: `/collections/<collection_id>`
   - Method: `GET`
   - Description: Retrieves a specific collection by its ID.
 
 - **Update Collection:**
+
   - Endpoint: `/collections/<collection_id>`
   - Method: `PATCH`
   - Payload: `{ "name": "<new_name>", "photo_url": "<new_photo_url>" }`
