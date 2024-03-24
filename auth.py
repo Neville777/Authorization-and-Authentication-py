@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 from models import User, db, TokenBlockList
 from flask_restful import reqparse, Resource, Api
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, JWTManager, get_jwt, jwt_required, verify_jwt_in_request, create_refresh_token
+from flask_jwt_extended import create_access_token,get_jwt_identity, JWTManager, get_jwt, jwt_required, verify_jwt_in_request, create_refresh_token
 from functools import wraps
 from datetime import datetime
 
@@ -37,6 +37,14 @@ def check_if_token_revoked(jwt_header, jwt_payload:dict) -> bool:
     
     return token is not None
 
+@jwt.additional_claims_loader
+def add_claims_to_access_token(identity):
+    user = User.query.filter_by(id=identity).first()
+    return {
+        "role":2201,
+        "name":user.email
+    }
+
 # Create a Blueprint for authentication
 auth_bp = Blueprint('auth', __name__)
 
@@ -65,44 +73,50 @@ class UserRegister(Resource):
         db.session.commit()
         # Return user data as dictionary
         return user.to_dict()
-
-class LoginUser(Resource):
+class LoginLogoutUser(Resource):
     def post(self):
+        # Parse incoming request arguments
         data = login_args.parse_args()
         # Query user by email
         user = User.query.filter_by(email=data.get('email')).first()
-        if user:
-            # Check password hash
-            if check_password_hash(user.password, data.get('password')):
-                # Create access token for the user
-                token = create_access_token(identity=user.id)
-                return token
-
-class LoginLogoutUser(Resource):
-    def post(self):
-        data = login_args.parse_args()
-        user = User.query.filter_by(email=data.get('email')).first()
         print(user)
+        # Check if user exists and password is correct
         if user:
             if check_password_hash(user.password, data.get('password')):
-                access_token = create_access_token(
-                    identity=user.id
-                )
-                refresh_token = create_refresh_token(identity = user.id)
+                # Generate access token for the user
+                access_token = create_access_token(identity=user.id)
+                # Generate refresh token for the user
+                refresh_token = create_refresh_token(identity=user.id)
+                # Return access and refresh tokens in response
                 return {
-                    "token":access_token,
-                    "refresh":refresh_token
+                    "token": access_token,
+                    "refresh": refresh_token
                 }
-        return {"msg" : "not logged in"}
+        # If user not found or password is incorrect, return appropriate message
+        return {"msg": "not logged in"}
+    
+    @jwt_required(refresh=True)
+    def get(self):
+        identity = get_jwt_identity()
+        new_token = create_access_token(identity=identity)
+        return {"token":new_token}
+    
+class Logout(Resource):
     
     @jwt_required()
     def get(self):
+        # Retrieve JWT data from the request
         jwt_data = get_jwt()
+        # Create a TokenBlocklist entry for the JWT token to invalidate it
         blocked_token = TokenBlockList(
             jti=jwt_data.get('jti'), created_at=datetime.utcnow())
+        # Add the TokenBlocklist entry to the database session
         db.session.add(blocked_token)
+        # Commit changes to the database
         db.sesion.commit()
+        # Return a success message indicating user logout
         return {"msg": "user logged out successfully"}
+
         
 class UserManagement(Resource):
     
