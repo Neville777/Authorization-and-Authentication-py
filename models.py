@@ -47,3 +47,8 @@ class Collection(db.Model, SerializerMixin):
     
     # Relationships
     user = db.relationship('User', back_populates='collections')  # Many-to-one relationship with User
+
+class TokenBlockList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, nullable=False)

@@ -14,7 +14,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///db.db'  # SQLite database URI
 app.config['SECRET_KEY'] = 'jwt36v-12hrv2;sfqwf87a'  # Secret key for JWT
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable Flask-SQLAlchemy modification tracking
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)  # JWT access token expiration time
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=2)  # JWT access token expiration time
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)  # JWT refresh token expiration time']
 app.json.compact = False  # Compact JSON response format
 
 # Register blueprints for different parts of the application
